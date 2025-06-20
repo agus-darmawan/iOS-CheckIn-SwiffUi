@@ -10,9 +10,22 @@
 		05BCE2682E04EC06005F64B2 /* CheckIn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheckIn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		05BCE33A2E04F4A5005F64B2 /* Exceptions for "CheckIn" folder in "CheckIn" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 05BCE2672E04EC06005F64B2 /* CheckIn */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		05BCE26A2E04EC06005F64B2 /* CheckIn */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				05BCE33A2E04F4A5005F64B2 /* Exceptions for "CheckIn" folder in "CheckIn" target */,
+			);
 			path = CheckIn;
 			sourceTree = "<group>";
 		};
@@ -256,6 +269,9 @@
 				DEVELOPMENT_TEAM = 962K8CY5A5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CheckIn/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your sensitive data";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access your lcoation to make sure you are in Apple Developer Academy @UC";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +300,9 @@
 				DEVELOPMENT_TEAM = 962K8CY5A5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CheckIn/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your sensitive data";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access your lcoation to make sure you are in Apple Developer Academy @UC";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
