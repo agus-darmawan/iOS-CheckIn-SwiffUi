@@ -45,13 +45,13 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationForTab(_ tab: MainTab) -> some View {
         switch tab {
-        case .checkin: TestView(title: "Capture", color: .orange)
+        case .checkin: AttendanceView()
         case .enroll: FaceRegistrationView()
         case .location: LocationView()
         case .capture:   LiveFaceRecognitionView(modelContext: modelContext)
                 .ignoresSafeArea()
-        case .attribute: TestView(title: "Attribute", color: .purple)
-//        case .settings: TestView(title: "Settings", color: .gray)
+        case .attribute: TestView()
+        case .settings: SettingsView()
         case .persons: FaceManagementView()
         }
     }

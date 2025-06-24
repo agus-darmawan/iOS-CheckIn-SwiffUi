@@ -20,7 +20,6 @@ struct LiveFaceRecognitionView: UIViewControllerRepresentable {
 
 // Enhanced Liveness Detection Structure
 struct LivenessDetector {
-
     private var eyeBlinkHistory: [TimeInterval] = []
     private var headMovementHistory: [FacePoseInfo] = []
     private var faceAreaHistory: [CGFloat] = []
@@ -432,6 +431,7 @@ class CameraViewController: UIViewController {
                             faceBoundingBox: faceBoundingBoxOnScreen
                         )
                     }
+//                    handleRecognizedEmployee(employee: registeredFace)
                     lastRecognitionTime = currentTime
                 }
             } else {
@@ -458,20 +458,9 @@ class CameraViewController: UIViewController {
                 drawings.append(liveIndicator)
             }
             
-//            // Create text layer with enhanced info including recognition
-//            let textLayer = createEnhancedTextLayer(
-//                poseInfo: poseInfo,
-//                boundingBox: faceBoundingBoxOnScreen,
-//                faceIndex: index,
-//                livenessResult: livenessResult,
-//                recognitionResult: recognitionResult
-//            )
-            
             view.layer.addSublayer(faceBoundingBoxShape)
-//            view.layer.addSublayer(textLayer)
             
             drawings.append(faceBoundingBoxShape)
-//            drawings.append(textLayer)
         }
     }
     
@@ -799,14 +788,6 @@ class CameraViewController: UIViewController {
     }
 }
 
-// Structure to hold face pose information
-struct FacePoseInfo {
-    let yaw: Float
-    let pitch: Float
-    let roll: Float
-    let confidence: Float
-}
-
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let frame = CMSampleBufferGetImageBuffer(sampleBuffer) else {
@@ -814,4 +795,12 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         }
         detectFace(image: frame)
     }
+}
+
+// Define the FacePoseInfo struct
+struct FacePoseInfo {
+    let yaw: Float
+    let pitch: Float
+    let roll: Float
+    let confidence: Float
 }
