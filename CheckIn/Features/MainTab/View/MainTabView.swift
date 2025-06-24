@@ -34,7 +34,7 @@ struct MainTabView: View {
                     } label: {
                         MainButtonView(tab: tab)
                     }
-                    .buttonStyle(ScaleButtonStyle())
+//                    .buttonStyle(ScaleButtonStyle())
                 }
             }
             .padding(.horizontal)

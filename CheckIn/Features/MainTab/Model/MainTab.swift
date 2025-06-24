@@ -13,7 +13,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
     case location
     case capture
     case attribute
-    case settings
+//    case settings
     case persons
     
     var id: String { rawValue }
@@ -25,7 +25,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
         case .location: return "Location"
         case .capture: return "Capture"
         case .attribute: return "Attribute"
-        case .settings: return "Settings"
+//        case .settings: return "Settings"
         case .persons: return "Persons"
         }
     }
@@ -37,7 +37,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
         case .location: return "Find Location"
         case .capture: return "Record information"
         case .attribute: return "Manage characteristics"
-        case .settings: return "App configuration"
+//        case .settings: return "App configuration"
         case .persons: return "View all persons"
         }
     }
@@ -49,7 +49,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
         case .location: return "location.fill"
         case .capture: return "camera.fill"
         case .attribute: return "tag.fill"
-        case .settings: return "gearshape.fill"
+//        case .settings: return "gearshape.fill"
         case .persons: return "person.3.fill"
         }
     }
@@ -61,7 +61,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
         case .location: return .green
         case .capture: return .orange
         case .attribute: return .purple
-        case .settings: return .gray
+//        case .settings: return .gray
         case .persons: return .indigo
         }
     }

@@ -11,12 +11,11 @@ import SwiftData
 @main
 struct CheckInApp: App {
     let modelContainer: ModelContainer
-    @State private var attendanceViewModel = AttendanceViewModel()
     @StateObject private var auth = AuthViewModel.shared
     
     init() {
         do {
-            modelContainer = try ModelContainer(for: Person.self, CheckInLog.self)
+            modelContainer = try ModelContainer(for: RegisteredFace.self)
         } catch {
             fatalError("Failed to initialize ModelContainer: \(error)")
         }
@@ -25,12 +24,9 @@ struct CheckInApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(attendanceViewModel)
                 .environmentObject(auth)
-                .modelContainer(modelContainer)
-                .onAppear {
-                    attendanceViewModel.setModelContext(modelContainer.mainContext)
-                }
+                .modelContainer(for: [RegisteredFace.self])
+
         }
     }
 }

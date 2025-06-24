@@ -10,7 +10,6 @@ import SwiftData
 
 struct ContentView: View {
     @EnvironmentObject var auth: AuthViewModel
-    @Environment(AttendanceViewModel.self) private var attendanceViewModel
     @State private var selectedTab: MainTab? = nil
     @Environment(\.modelContext) private var modelContext
     
@@ -46,13 +45,14 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationForTab(_ tab: MainTab) -> some View {
         switch tab {
-        case .checkin: CheckInView()
-        case .enroll: EnrollView()
+        case .checkin: TestView(title: "Capture", color: .orange)
+        case .enroll: FaceRegistrationView()
         case .location: LocationView()
-        case .capture: TestView(title: "Capture", color: .orange)
+        case .capture:   LiveFaceRecognitionView(modelContext: modelContext)
+                .ignoresSafeArea()
         case .attribute: TestView(title: "Attribute", color: .purple)
-        case .settings: TestView(title: "Settings", color: .gray)
-        case .persons: ViewPersonView()
+//        case .settings: TestView(title: "Settings", color: .gray)
+        case .persons: FaceManagementView()
         }
     }
 }
