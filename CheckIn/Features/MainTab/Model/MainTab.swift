@@ -8,6 +8,7 @@
 import SwiftUI
 
 enum MainTab: String, CaseIterable, Identifiable, Hashable {
+    case checkin
     case enroll
     case location
     case capture
@@ -19,6 +20,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
     
     var title: String {
         switch self {
+        case .checkin: return "Attendance"
         case .enroll: return "Enroll"
         case .location: return "Location"
         case .capture: return "Capture"
@@ -30,6 +32,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
     
     var subtitle: String {
         switch self {
+        case .checkin: return "Check-in/Check-out"
         case .enroll: return "Register new entries"
         case .location: return "Find Location"
         case .capture: return "Record information"
@@ -41,6 +44,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
     
     var iconName: String {
         switch self {
+        case .checkin: return "clock.fill"
         case .enroll: return "person.badge.plus"
         case .location: return "location.fill"
         case .capture: return "camera.fill"
@@ -52,6 +56,7 @@ enum MainTab: String, CaseIterable, Identifiable, Hashable {
     
     var color: Color {
         switch self {
+        case .checkin: return .teal
         case .enroll: return .blue
         case .location: return .green
         case .capture: return .orange

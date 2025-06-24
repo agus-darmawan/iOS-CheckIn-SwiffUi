@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @EnvironmentObject var auth: AuthViewModel
+    @Environment(AttendanceViewModel.self) private var attendanceViewModel
     @State private var selectedTab: MainTab? = nil
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         NavigationStack {
@@ -43,12 +46,13 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationForTab(_ tab: MainTab) -> some View {
         switch tab {
-        case .enroll: TestView(title: "Enroll", color: .red)
+        case .checkin: CheckInView()
+        case .enroll: EnrollView()
         case .location: LocationView()
         case .capture: TestView(title: "Capture", color: .orange)
         case .attribute: TestView(title: "Attribute", color: .purple)
         case .settings: TestView(title: "Settings", color: .gray)
-        case .persons: TestView(title: "Persons", color: .blue)
+        case .persons: ViewPersonView()
         }
     }
 }

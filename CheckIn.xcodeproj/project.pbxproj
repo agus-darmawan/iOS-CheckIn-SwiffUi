@@ -270,6 +270,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CheckIn/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your sensitive data";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access your lcoation to make sure you are in Apple Developer Academy @UC";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -302,6 +303,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CheckIn/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your sensitive data";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access your lcoation to make sure you are in Apple Developer Academy @UC";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
