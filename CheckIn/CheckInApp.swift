@@ -15,9 +15,37 @@ struct CheckInApp: App {
     
     init() {
         do {
-            modelContainer = try ModelContainer(for: RegisteredFace.self)
+            // Create model container with proper configuration
+            let schema = Schema([
+                RegisteredFace.self,
+                Employee.self,
+                AttendanceRecord.self,
+                AttendanceSettings.self
+            ])
+            
+            let modelConfiguration = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                allowsSave: true
+            )
+            
+            modelContainer = try ModelContainer(
+                for: schema,
+                configurations: [modelConfiguration]
+            )
+            
+            print("✅ ModelContainer initialized successfully")
+            
         } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
+            print("❌ Failed to initialize ModelContainer: \(error)")
+            
+            // Fallback: try with minimal models first
+            do {
+                modelContainer = try ModelContainer(for: RegisteredFace.self)
+                print("⚠️ Using fallback ModelContainer with RegisteredFace only")
+            } catch {
+                fatalError("Failed to initialize even fallback ModelContainer: \(error)")
+            }
         }
     }
     
@@ -25,8 +53,7 @@ struct CheckInApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(auth)
-                .modelContainer(for: [RegisteredFace.self])
-
+                .modelContainer(modelContainer)
         }
     }
 }

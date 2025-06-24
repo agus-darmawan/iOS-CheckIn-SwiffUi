@@ -6,10 +6,12 @@ import SwiftData
 // SwiftUI wrapper for the camera view
 struct LiveFaceRecognitionView: UIViewControllerRepresentable {
     let modelContext: ModelContext
+    var onEmployeeRecognized: ((Employee) -> Void)? = nil
     
     func makeUIViewController(context: Context) -> CameraViewController {
         let cameraVC = CameraViewController()
         cameraVC.modelContext = modelContext
+        cameraVC.onEmployeeRecognized = onEmployeeRecognized
         return cameraVC
     }
     
@@ -275,6 +277,7 @@ class CameraViewController: UIViewController {
     private let imageProcessor = ImageProcessor()
     private let databaseService = DatabaseService()
     var modelContext: ModelContext?
+    var onEmployeeRecognized: ((Employee) -> Void)?
     
     // Recognition cache to avoid too frequent recognition calls
     private var lastRecognitionTime: TimeInterval = 0
@@ -291,6 +294,15 @@ class CameraViewController: UIViewController {
     // Store current recognition results for UI updates
     private var currentRecognitionResults: [String: FaceRecognitionResult] = [:]
     
+    // ATTENDANCE INTEGRATION
+    private let attendanceService = AttendanceService()
+    private var lastAttendanceTime: TimeInterval = 0
+    private let attendanceInterval: TimeInterval = 5.0 // 5 seconds minimum between attendance records
+    private var isProcessingAttendance = false
+    
+    // Feedback untuk user
+    private var attendanceResultLayer: CATextLayer?
+    
     private lazy var previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
     
     override func viewDidLoad() {
@@ -300,6 +312,11 @@ class CameraViewController: UIViewController {
         showCameraFeed()
         captureFrames()
         captureSession.startRunning()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        captureSession.stopRunning()
     }
     
     private func setupCameraInput() {
@@ -431,7 +448,6 @@ class CameraViewController: UIViewController {
                             faceBoundingBox: faceBoundingBoxOnScreen
                         )
                     }
-//                    handleRecognizedEmployee(employee: registeredFace)
                     lastRecognitionTime = currentTime
                 }
             } else {
@@ -484,7 +500,134 @@ class CameraViewController: UIViewController {
                 self.uiUpdateQueue.async {
                     self.currentRecognitionResults[faceKey] = result
                     self.updateRecognitionUI(result: result, faceBoundingBox: faceBoundingBox)
+                    
+                    // ATTENDANCE INTEGRATION: Process attendance if face is recognized
+                    if result.isMatch, let recognizedFace = result.registeredFace {
+                        self.handleSuccessfulRecognition(recognizedFace)
+                    }
                 }
+            }
+        }
+    }
+    
+    // ATTENDANCE INTEGRATION: Process attendance when face is recognized
+    private func handleSuccessfulRecognition(_ registeredFace: RegisteredFace) {
+        guard let modelContext = modelContext else {
+            print("❌ ModelContext not available for attendance")
+            return
+        }
+        
+        let currentTime = Date().timeIntervalSince1970
+        
+        // Prevent too frequent attendance processing
+        guard currentTime - lastAttendanceTime > attendanceInterval else {
+            print("⏳ Attendance interval not met, skipping")
+            return
+        }
+        
+        // Prevent multiple simultaneous processing
+        guard !isProcessingAttendance else {
+            print("⏳ Already processing attendance, skipping")
+            return
+        }
+        
+        isProcessingAttendance = true
+        lastAttendanceTime = currentTime
+        
+        print("🔄 Processing attendance for recognized face: \(registeredFace.name)")
+        
+        // Process attendance in background
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            let result = self.attendanceService.processAttendance(for: registeredFace, modelContext: modelContext)
+            
+            // Update UI on main thread
+            DispatchQueue.main.async {
+                self.isProcessingAttendance = false
+                self.showAttendanceResult(result)
+                
+                // Call the callback with employee if provided
+                if result.success, let employee = self.attendanceService.getEmployeeForRegisteredFace(registeredFace, modelContext: modelContext) {
+                    self.onEmployeeRecognized?(employee)
+                }
+                
+                // Generate haptic feedback
+                if result.success {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                }
+            }
+        }
+    }
+    
+    // ATTENDANCE INTEGRATION: Show attendance result to user
+    private func showAttendanceResult(_ result: AttendanceProcessResult) {
+        // Remove existing result layer
+        attendanceResultLayer?.removeFromSuperlayer()
+        
+        // Create new result layer
+        let resultLayer = CATextLayer()
+        
+        let actionText = result.action == .checkIn ? "CHECK-IN" : "CHECK-OUT"
+        let statusIcon = result.success ? "✅" : "❌"
+        let displayText = """
+        \(statusIcon) \(actionText)
+        👤 \(result.employee)
+        📅 \(Date().formatted(date: .abbreviated, time: .shortened))
+        
+        \(result.message)
+        """
+        
+        resultLayer.string = displayText
+        resultLayer.fontSize = 14
+        resultLayer.foregroundColor = UIColor.white.cgColor
+        resultLayer.backgroundColor = result.success ?
+            UIColor.systemGreen.withAlphaComponent(0.9).cgColor :
+            UIColor.systemRed.withAlphaComponent(0.9).cgColor
+        resultLayer.cornerRadius = 12
+        resultLayer.alignmentMode = .center
+        resultLayer.contentsScale = UIScreen.main.scale
+        resultLayer.borderWidth = 2
+        resultLayer.borderColor = UIColor.white.cgColor
+        
+        // Position at center-bottom of screen
+        let resultWidth: CGFloat = 280
+        let resultHeight: CGFloat = 120
+        resultLayer.frame = CGRect(
+            x: (view.frame.width - resultWidth) / 2,
+            y: view.frame.height - resultHeight - 100,
+            width: resultWidth,
+            height: resultHeight
+        )
+        
+        view.layer.addSublayer(resultLayer)
+        attendanceResultLayer = resultLayer
+        
+        // Add slide-up animation
+        let slideAnimation = CABasicAnimation(keyPath: "transform.translation.y")
+        slideAnimation.fromValue = 100
+        slideAnimation.toValue = 0
+        slideAnimation.duration = 0.3
+        slideAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        resultLayer.add(slideAnimation, forKey: "slideUp")
+        
+        // Auto-hide after 3 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            guard let self = self else { return }
+            
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.fromValue = 1.0
+            fadeAnimation.toValue = 0.0
+            fadeAnimation.duration = 0.5
+            fadeAnimation.fillMode = .forwards
+            fadeAnimation.isRemovedOnCompletion = false
+            
+            self.attendanceResultLayer?.add(fadeAnimation, forKey: "fadeOut")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.attendanceResultLayer?.removeFromSuperlayer()
+                self.attendanceResultLayer = nil
             }
         }
     }
@@ -503,9 +646,6 @@ class CameraViewController: UIViewController {
         } else {
             print("❓ Unknown Face Detected (Highest Similarity: \(String(format: "%.2f%%", result.similarity * 100)))")
         }
-        
-        // Force UI refresh to ensure the recognition result is displayed
-        // The UI will be updated in the next frame processing cycle
     }
     
     private func performFaceRecognition(from pixelBuffer: CVPixelBuffer, faceObservation: VNFaceObservation) -> FaceRecognitionResult? {
@@ -638,8 +778,8 @@ class CameraViewController: UIViewController {
     
     private func createLiveIndicator(boundingBox: CGRect, recognitionResult: FaceRecognitionResult?) -> CATextLayer {
         let liveIndicator = CATextLayer()
-            liveIndicator.string = "👤 \(name)"
-            liveIndicator.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9).cgColor
+        liveIndicator.string = "👤 \(name.isEmpty ? "Unknown" : name)"
+        liveIndicator.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9).cgColor
         
         liveIndicator.fontSize = 16
         liveIndicator.foregroundColor = UIColor.white.cgColor

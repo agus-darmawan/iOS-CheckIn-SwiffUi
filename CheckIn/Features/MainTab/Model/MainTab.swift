@@ -5,64 +5,66 @@
 //  Created by Akmal Ariq on 17/06/25.
 //
 
+//
+//  MainTab.swift
+//  checkin-app
+//
+//  Created by Akmal Ariq on 17/06/25.
+//
+
 import SwiftUI
 
 enum MainTab: String, CaseIterable, Identifiable, Hashable {
-    case checkin
+    case attendance
     case enroll
-    case location
     case capture
-    case attribute
     case settings
     case persons
+    case developerTools
     
     var id: String { rawValue }
     
     var title: String {
         switch self {
-        case .checkin: return "Attendance"
+        case .attendance: return "Attendance"
         case .enroll: return "Enroll"
-        case .location: return "Location"
         case .capture: return "Capture"
-        case .attribute: return "Attribute"
         case .settings: return "Settings"
         case .persons: return "Persons"
+        case .developerTools: return "Developer Tools"
         }
     }
     
     var subtitle: String {
         switch self {
-        case .checkin: return "Check-in/Check-out"
-        case .enroll: return "Register new entries"
-        case .location: return "Find Location"
-        case .capture: return "Record information"
-        case .attribute: return "Manage characteristics"
+        case .attendance: return "Record attendance"
+        case .enroll: return "Register new face"
+        case .capture: return "Live attendance capture"
         case .settings: return "App configuration"
-        case .persons: return "View all persons"
+        case .persons: return "View all registered persons"
+        case .developerTools: return "Developer tools for testing during developement"
         }
     }
     
     var iconName: String {
         switch self {
-        case .checkin: return "clock.fill"
+        case .attendance: return "clock.fill"
         case .enroll: return "person.badge.plus"
-        case .location: return "location.fill"
         case .capture: return "camera.fill"
-        case .attribute: return "tag.fill"
         case .settings: return "gearshape.fill"
         case .persons: return "person.3.fill"
+        case .developerTools: return "tag.fill"
         }
     }
     
     var color: Color {
         switch self {
-        case .checkin: return .teal
+        case .attendance: return .teal
         case .enroll: return .blue
-        case .location: return .green
         case .capture: return .orange
-        case .attribute: return .purple
         case .settings: return .gray
         case .persons: return .indigo
+        case .developerTools: return .purple
         }
     }
 }

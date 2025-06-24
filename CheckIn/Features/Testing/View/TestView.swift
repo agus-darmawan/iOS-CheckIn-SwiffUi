@@ -105,7 +105,7 @@ struct TestView: View {
                     }
                 }
             }
-            .navigationTitle("Testing")
+            .navigationTitle("Developer Tools")
             .navigationBarTitleDisplayMode(.large)
             .photosPicker(
                 isPresented: $showingImagePicker,

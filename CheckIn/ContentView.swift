@@ -21,14 +21,29 @@ struct ContentView: View {
                 VStack(spacing: 0) {
                     MainTabView(handleSelection: handleTabSelection)
                     Spacer()
+                    
+                    // Footer with custom text
+                    HStack {
+                        Spacer()
+                        Text("Your trusted attendance solution - CheckIn App")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+                    .padding()
                 }
                 .navigationDestination(item: $selectedTab, destination: destinationForTab)
             }
         }
+        .onAppear {
+            SettingsInitializer.createDefaultSettings(modelContext: modelContext)
+        }
     }
 
     private func handleTabSelection(_ tab: MainTab) {
-        let requiresAuth = tab == .enroll || tab == .persons
+        let requiresAuth = tab == .enroll || tab == .persons || tab == .developerTools || tab == .settings
         
         if requiresAuth && !auth.isAuthenticated {
             auth.authenticate()
@@ -45,14 +60,13 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationForTab(_ tab: MainTab) -> some View {
         switch tab {
-        case .checkin: AttendanceView()
+        case .attendance: AttendanceView()
         case .enroll: FaceRegistrationView()
-        case .location: LocationView()
-        case .capture:   LiveFaceRecognitionView(modelContext: modelContext)
+        case .capture: LiveFaceRecognitionView(modelContext: modelContext)
                 .ignoresSafeArea()
-        case .attribute: TestView()
-        case .settings: SettingsView()
         case .persons: FaceManagementView()
+        case .settings: SettingsView()
+        case .developerTools:TestView()
         }
     }
 }
