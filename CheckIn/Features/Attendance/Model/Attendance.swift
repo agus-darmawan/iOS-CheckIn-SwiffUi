@@ -54,11 +54,11 @@ enum AttendanceStatus: String, Codable, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .present: return "Hadir"
-        case .absent: return "Tidak Hadir"
-        case .late: return "Terlambat"
-        case .leave: return "Cuti"
-        case .holiday: return "Libur"
+        case .present: return "Attended"
+        case .absent: return "Not Attended"
+        case .late: return "Late"
+        case .leave: return "Leave of absence"
+        case .holiday: return "Holiday"
         }
     }
 }

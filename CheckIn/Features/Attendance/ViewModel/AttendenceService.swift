@@ -139,7 +139,7 @@ class AttendanceService: ObservableObject {
                 
                 return AttendanceProcessResult(
                     success: true,
-                    message: "Check-out berhasil pada \(now.formatted(date: .omitted, time: .shortened))\nTotal kerja: \(hoursText)",
+                    message: "Check-out successful on \(now.formatted(date: .omitted, time: .shortened))\nTotal kerja: \(hoursText)",
                     action: .checkOut,
                     employee: getEmployeeName(for: record.employeeId, modelContext: modelContext)
                 )
@@ -147,7 +147,7 @@ class AttendanceService: ObservableObject {
                 print("❌ Failed to save check-out: \(error)")
                 return AttendanceProcessResult(
                     success: false,
-                    message: "Gagal menyimpan check-out: \(error.localizedDescription)",
+                    message: "Failed to record checkout: \(error.localizedDescription)",
                     action: .checkOut,
                     employee: getEmployeeName(for: record.employeeId, modelContext: modelContext)
                 )
@@ -178,11 +178,11 @@ class AttendanceService: ObservableObject {
             try modelContext.save()
             print("✅ Check-in processed successfully")
             
-            let statusText = newRecord.isLate ? " (Terlambat \(newRecord.lateMinutes) menit)" : ""
+            let statusText = newRecord.isLate ? " (You're late \(newRecord.lateMinutes) minutes)" : ""
             
             return AttendanceProcessResult(
                 success: true,
-                message: "Check-in berhasil pada \(now.formatted(date: .omitted, time: .shortened))\(statusText)",
+                message: "Check-in successful on \(now.formatted(date: .omitted, time: .shortened))\(statusText)",
                 action: .checkIn,
                 employee: employee.name
             )
@@ -190,7 +190,7 @@ class AttendanceService: ObservableObject {
             print("❌ Failed to save check-in: \(error)")
             return AttendanceProcessResult(
                 success: false,
-                message: "Gagal menyimpan check-in: \(error.localizedDescription)",
+                message: "Failed to in: \(error.localizedDescription)",
                 action: .checkIn,
                 employee: employee.name
             )
